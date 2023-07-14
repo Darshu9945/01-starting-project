@@ -4,10 +4,10 @@ import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 const emailreducer=(state,action)=>{
-  if(action.type=="emial"){
+  if(action.type=="email"){
     return {value:action.val,isvalid:action.val.includes('@')}
   }
-  if (action.type=="emialhandler"){
+  if (action.type=="emailhandler"){
     return {value:state.value,isvalid:state.value.includes('@')}
   }
   return {value:'',isvalid:false}
@@ -16,27 +16,26 @@ const emailreducer=(state,action)=>{
 
 const passwordreducer=(state,action)=>{
   if(action.type=="password"){
-    return {value:action.val,isvalid:action.val.length>6}
+    return {value:action.val,isvalid1:action.val.length>6}
   }
   if (action.type=="passwordhandler"){
-    return {value:state.value,isvalid:state.value.length>6}
+    return {value:state.value,isvalid1:state.value.length>6}
   }
   return {value:'',isvalid:false}
 
 }
 
 const Login = (props) => {
-  const [collegenamelIsValid, setcollegenameIsValid] = useState();
-  const [enterecollegename, setEnteredcollegname] = useState('');
+
   const [formIsValid, setFormIsValid] = useState(false);
-const [emailstate,dispatch]=useReducer(emailreducer ,{value:'',isvalid:false})
+const [emailstate,dispatchemail]=useReducer(emailreducer ,{value:'',isvalid:false})
 const [passwordstate,dispatchpassword]=useReducer(passwordreducer ,{value:'',isvalid:false})
 
   const emailChangeHandler = (event) => {
-    dispatch({type:"emial",val:event.target.value})
+    dispatchemail({type:"email",val:event.target.value})
 
     setFormIsValid(
-      passwordstate.value.trim().length > 6 && event.target.value.includes('@') && enterecollegename.trim().length>4
+      passwordstate.value.trim().length > 6 && event.target.value.includes('@') 
     );
   };
 
@@ -44,25 +43,18 @@ const [passwordstate,dispatchpassword]=useReducer(passwordreducer ,{value:'',isv
     dispatchpassword({type:"password",val:event.target.value})
 
     setFormIsValid(
-      passwordstate.value.trim().length > 6 && emailstate.value.includes('@') && enterecollegename.trim().length>4
+      passwordstate.value.trim().length > 6 && emailstate.value.includes('@') 
     );
   };
-const collegenameChangeHandler=(e)=>{
-  setEnteredcollegname(e.target.value)
-  setFormIsValid(
-    e.target.value.trim().length > 4 && emailstate.value.includes('@') && passwordstate.value.trim().length>6
-  );
-}
+
   const validateEmailHandler = () => {
-    dispatch({type:"emailhandler"})
+    dispatchemail({type:"emailhandler"})
   };
 
   const validatePasswordHandler = () => {
-    dispatch({type:"passwordhandler"})
+    dispatchpassword({type:"passwordhandler"})
   };
-  const validatecollegenameHandler=()=>{
-    setcollegenameIsValid(enterecollegename.trim().length>=4)
-  }
+ 
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -74,7 +66,7 @@ const collegenameChangeHandler=(e)=>{
       <form onSubmit={submitHandler}>
         <div
           className={`${classes.control} ${
-            collegenamelIsValid === false ? classes.invalid : ''
+            emailstate.isvalid === false ? classes.invalid : ''
           }`}
         >
           <label htmlFor="email">E-Mail</label>
@@ -88,7 +80,7 @@ const collegenameChangeHandler=(e)=>{
         </div>
         <div
           className={`${classes.control} ${
-            passwordstate.value === false ? classes.invalid : ''
+            passwordstate.isvalid1 === false ? classes.invalid : ''
           }`}
         >
           <label htmlFor="password">Password</label>
@@ -100,17 +92,7 @@ const collegenameChangeHandler=(e)=>{
             onBlur={validatePasswordHandler}
           />
         </div>
-        <div  className={`${classes.control} ${
-            passwordstate === false ? classes.invalid : ''
-          }`}>
-          <label htmlFor='collegename'>College-name</label>
-          <input 
-          type="text"
-           id='collegename' 
-           value={enterecollegename}
-            onChange={collegenameChangeHandler}
-            onBlur={validatecollegenameHandler}/>
-        </div>
+       
         <div className={classes.actions}>
           <Button type="submit" className={classes.btn} disabled={!formIsValid}>
             Login
